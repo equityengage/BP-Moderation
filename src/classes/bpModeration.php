@@ -1,5 +1,7 @@
 <?php
 
+use \BPModeration\Models\PluginOptions;
+
 bpModLoader::load_class('bpModAbstractCore');
 
 /**
@@ -46,7 +48,7 @@ class bpModeration extends bpModAbstractCore
 
 		$this->plugin_url = plugins_url('', bpModLoader::file());
 
-		$this->options = get_site_option('bp_moderation_options');
+		$this->options = new PluginOptions();
 	}
 
 	/**
@@ -146,13 +148,7 @@ class bpModeration extends bpModAbstractCore
 	{
 		$_this = & bpModeration::get_istance();
 
-		if (isset($_this->options[$name])) {
-			return $_this->options[$name];
-		}
-		else
-		{
-			return null;
-		}
+		return $_this->options[$name];
 	}
 
 	/**

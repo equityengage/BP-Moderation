@@ -4,8 +4,6 @@
 Vagrant.configure("2") do |config|
   config.vm.box = 'precise32'
   config.vm.box_url = 'http://files.vagrantup.com/precise32.box'
-  
-  config.vm.hostname = 'bpmod.dev'
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -26,8 +24,7 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   config.vm.synced_folder ".", "/vagrant",
-    #:nfs => (RUBY_PLATFORM =~ /linux/ or RUBY_PLATFORM =~ /darwin/),
-    :owner => "www-data", :group => "www-data"
+    :nfs => (RUBY_PLATFORM =~ /linux/ or RUBY_PLATFORM =~ /darwin/)
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -60,7 +57,8 @@ Vagrant.configure("2") do |config|
       'wpcli' => {
         'installs' => {
           'bpmod' => {
-            'path' => '/vagrant/wp',
+            'url' => 'bpmod.dev',
+          	'title' => 'bpmod singlesite test',
             'plugins' => {
               'buddypress' => {
                 'active' => true
@@ -70,15 +68,37 @@ Vagrant.configure("2") do |config|
                 'active' => true
               }
             }
+          },
+          'bpmod-network' => {
+          	'url' => 'bpmod-net.dev',
+          	'title' => 'bpmod multisite test',
+          	'network' => {
+          		'title' => 'bpmod multisite test network'	
+          	},
+            'plugins' => {
+              'buddypress' => {
+              	'network' => true,
+                'active' => true
+              },
+              'bp-moderation' => {
+                'source' => '/vagrant/src',
+              	'network' => true,
+                'active' => true
+              }
+            }
           }
         },
-        'user' => 'www-data',
-        'group' => 'www-data',
+        'user' => 'vagrant',
+        'group' => 'vagrant',
       },
       'mysql' => {
         'server_root_password'   => 'iloverandompasswordsbutthiswilldo',
         'server_repl_password'   => 'iloverandompasswordsbutthiswilldo',
         'server_debian_password' => 'iloverandompasswordsbutthiswilldo'
+      },
+      'apache' => {
+        'user' => 'vagrant',
+        'group' => 'vagrant',
       }
     }
   end

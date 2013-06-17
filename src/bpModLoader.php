@@ -1,32 +1,4 @@
 <?php
-/*
-Plugin Name: BuddyPress Moderation
-Plugin URI: http://buddypress.org/community/groups/bp-moderation/
-Description: Plugin for moderation of buddypress communities, it adds a 'report this' link to every content so members can help admin finding inappropriate content.
-Version: 0.1.6
-Author: Francesco Laffi
-Author URI: http://flweb.it
-License: GPL2
-Network: true
-Text Domain: bp-moderation
-Domain Path: /lang
-*/
-
-/*  Copyright 2011  Francesco Laffi  (email : francesco.laffi@gmail.com)
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License, version 2, as
-  published by the Free Software Foundation.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
 
 //load the plugin
 new bpModLoader();
@@ -36,22 +8,25 @@ new bpModLoader();
  */
 class bpModLoader
 {
+    public $basename;
+
 	/**
 	 * hook the plugin in buddypress and in activation/deactivation
 	 */
-	function __construct()
+	public function __construct()
 	{
+        $this->basename= plugin_basename(dirname(self::file()));
+
 		add_action('bp_init', array($this, 'init'));
 
 		register_activation_hook(self::file(), array($this, 'call_activate'));
-
 		register_deactivation_hook(self::file(), array($this, 'call_deactivate'));
 	}
 
 	/**
 	 * Load needed class
 	 */
-	function init()
+	public function init()
 	{
 		if (is_admin()) {
 			if(defined('DOING_AJAX') && DOING_AJAX && 'bpmodfrontend' === $_REQUEST['action']) {
@@ -91,6 +66,8 @@ class bpModLoader
 		do_action('bp_moderation_init', array(&$bpMod));
 	}
 
+
+
 	/**
 	 * Load string translations
 	 *
@@ -100,9 +77,9 @@ class bpModLoader
 	 *
 	 * @return bool if a translation was found and loaded
 	 */
-	function loadL10n(){
+	public function loadL10n(){
 		return load_plugin_textdomain('bp-moderation')
-			|| load_plugin_textdomain('bp-moderation', false, self::basename().'/lang');
+			|| load_plugin_textdomain('bp-moderation', false, $this->basename.'/lang');
 	}
 
 	private function call_installer($method, $args = array())
@@ -116,7 +93,7 @@ class bpModLoader
 	/**
 	 * activation callback
 	 */
-	function call_activate()
+	public function call_activate()
 	{
 		$args = func_get_args();
         $this->call_installer('activate', $args);
@@ -125,7 +102,7 @@ class bpModLoader
 	/**
 	 * deactivation callback
 	 */
-	function call_deactivate()
+	public function call_deactivate()
 	{
 		$args = func_get_args();
 		$this->call_installer('deactivate', $args);
@@ -136,7 +113,7 @@ class bpModLoader
 	 *
 	 * @param string $cname classname
 	 */
-	function load_class($cname)
+	public function load_class($cname)
 	{
 		if (class_exists($cname)) {
 			return;
@@ -146,69 +123,13 @@ class bpModLoader
 	}
 
 	/**
-	 * bpModLoader file path not following symlink
+	 * bpModLoader file path
 	 *
-	 * @return string this file path
+	 * @return string file path
 	 */
-	static function file()
+	public static function file()
 	{
-		static $path;
-		if ($path) return $path;
-
-		// not symlinked, great!
-		if(strpos(__FILE__, WP_PLUGIN_DIR) === 0) {
-			return $path = __FILE__;
-		}
-		if(strpos(__FILE__, WPMU_PLUGIN_DIR) === 0) {
-			return $path = __FILE__;
-		}
-
-		// see if we can find this file symbolic path in active plugins
-		$plugins = wp_get_active_and_valid_plugins();
-		if (is_multisite()) {
-			$plugins = array_merge($plugins, array_keys(wp_get_active_network_plugins()));
-		}
-		foreach($plugins as $sympath) {
-			if (realpath($sympath) === __FILE__){
-				return $path = $sympath;
-			}
-		}
-
-		// maybe we are in activation, look in all plugins
-		if (is_admin()) {
-			$plugins = array_keys(get_plugins());
-			foreach($plugins as $relpath) {
-				if (realpath(WP_PLUGIN_DIR.'/'.$relpath) === __FILE__){
-					return $path = WP_PLUGIN_DIR.'/'.$relpath;
-				}
-			}
-		}
-
-		// not found?!
-		return $path = __FILE__;
-	}
-
-	/**
-	 * bpModeration basename plugin folder basename
-	 *
-	 * @return string basename
-	 */
-	static function basename()
-	{
-		static $name;
-		if ($name) return $name;
-
-		return $name = plugin_basename(dirname(self::file()));
-	}
-
-	/**
-	 * bpModLoader real file path
-	 *
-	 * @return string this file path
-	 */
-	static function realfile()
-	{
-		return __FILE__;
+        return __FILE__;
 	}
 
 	/**
