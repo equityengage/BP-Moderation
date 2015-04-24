@@ -617,6 +617,11 @@ class bpModDefaultContentTypes
 
 	function forum_post_convert_activity_args($args)
 	{
+
+		if ( ! function_exists( 'bp_forums_get_topic_posts' ) ) {
+			return $args;
+		}
+
 		//in the 'new topic' activity we want to flag only the first post, not the whole topic
 		$first_post = bp_forums_get_topic_posts(array('topic_id' => $args['id2'], 'post_status' => 'all', 'page' => 1, 'per_page' => 1));
 
