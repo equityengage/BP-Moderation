@@ -15,7 +15,7 @@ class bpModDefaultContentTypes
 	 *
 	 * @param bpModeration $bpmod main plugin instance
 	 */
-	function init(&$bpmod)
+	public static function init(&$bpmod)
 	{
 
 		//init only if in frontend and only for choosen type
@@ -199,7 +199,7 @@ class bpModDefaultContentTypes
 	 * status_update & activity_comment
 	 */
 
-	function activity_info($id, $id2)
+	public static function activity_info($id, $id2)
 	{
 		$act = new BP_Activity_Activity($id);
 		if (empty($act->user_id)) {
@@ -211,7 +211,7 @@ class bpModDefaultContentTypes
 		return array('author' => $act->user_id, 'url' => $url, 'date' => $act->date_recorded);
 	}
 
-	function activity_comment_info($id, $id2)
+	public static function activity_comment_info($id, $id2)
 	{
 		$comm = new BP_Activity_Activity($id);
 
@@ -224,7 +224,7 @@ class bpModDefaultContentTypes
 		return array('author' => $comm->user_id, 'url' => $url, 'date' => $comm->date_recorded);
 	}
 
-	function activity_delete($id, $id2)
+	public static function activity_delete($id, $id2)
 	{
 		$act = new BP_Activity_Activity($id);
 
@@ -235,14 +235,14 @@ class bpModDefaultContentTypes
 		return bp_activity_delete(array('id' => $id, 'user_id' => $act->user_id));
 	}
 
-	function activity_correct_ids($args)
+	public static function activity_correct_ids($args)
 	{
 		$args['id'] = bp_get_activity_id();
 		$args['id2'] = bp_get_activity_item_id();
 		return $args;
 	}
 
-	function activity_comments_print_link()
+	public static function activity_comments_print_link()
 	{
 		$link = bpModFrontend::get_link(array(
 											 'type' => 'activity_comment',
@@ -258,7 +258,7 @@ class bpModDefaultContentTypes
 	 * blog_post
 	 */
 
-	function blog_post_info($id, $id2)
+	public static function blog_post_info($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -273,7 +273,7 @@ class bpModDefaultContentTypes
 		return array('author' => $post->post_author, 'url' => $url, 'date' => $post->post_date_gmt);
 	}
 
-	function blog_post_edit($id, $id2)
+	public static function blog_post_edit($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -284,7 +284,7 @@ class bpModDefaultContentTypes
 		return $url;
 	}
 
-	function blog_post_delete($id, $id2)
+	public static function blog_post_delete($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -295,7 +295,7 @@ class bpModDefaultContentTypes
 		return $r;
 	}
 
-	function blog_post_append_link($content)
+	public static function blog_post_append_link($content)
 	{
 		global $wpdb, $post;
 
@@ -314,7 +314,7 @@ class bpModDefaultContentTypes
 		return "$content\n\n$link";
 	}
 
-	function blog_page_append_link($content)
+	public static function blog_page_append_link($content)
 	{
 		global $wpdb, $post;
 
@@ -337,7 +337,7 @@ class bpModDefaultContentTypes
 	 * blog_comment
 	 */
 
-	function blog_comment_info($id, $id2)
+	public static function blog_comment_info($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -354,7 +354,7 @@ class bpModDefaultContentTypes
 		return array('author' => $author, 'url' => $url, 'date' => $comment->comment_date_gmt);
 	}
 
-	function blog_comment_edit($id, $id2)
+	public static function blog_comment_edit($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -365,7 +365,7 @@ class bpModDefaultContentTypes
 		return $url;
 	}
 
-	function blog_comment_delete($id, $id2)
+	public static function blog_comment_delete($id, $id2)
 	{
 		switch_to_blog($id);
 
@@ -376,7 +376,7 @@ class bpModDefaultContentTypes
 		return $r;
 	}
 
-	function blog_comment_author_details($details, $cont)
+	public static function blog_comment_author_details($details, $cont)
 	{
 		switch_to_blog($cont->item_id);
 
@@ -395,7 +395,7 @@ class bpModDefaultContentTypes
 		return $details;
 	}
 
-	function blog_comment_append_link($comment_text)
+	public static function blog_comment_append_link($comment_text)
 	{
 		global $wpdb, $comment;
 
@@ -413,7 +413,7 @@ class bpModDefaultContentTypes
 	/*******************************************************************************
 	 * member
 	 */
-	function member_info($id, $id2)
+	public static function member_info($id, $id2)
 	{
 		if (!$user = get_userdata($id)) {
 			return false;
@@ -422,7 +422,7 @@ class bpModDefaultContentTypes
 		return array('author' => $id, 'url' => bp_core_get_user_domain($id), 'date' => $user->user_registered);
 	}
 
-	function member_edit($id, $id2)
+	public static function member_edit($id, $id2)
 	{
 		if (bp_is_active('x-profile')) {
 			return bp_core_get_user_domain($id) . $GLOBALS['bp']->profile->slug . '/edit/';
@@ -433,7 +433,7 @@ class bpModDefaultContentTypes
 		}
 	}
 
-	function member_delete($id, $id2)
+	public static function member_delete($id, $id2)
 	{
 		if (!$user = get_userdata($id)) {
 			return true;
@@ -457,7 +457,7 @@ class bpModDefaultContentTypes
 		return $r;
 	}
 
-	function member_print_link()
+	public static function member_print_link()
 	{
 		$link = bpModFrontend::get_link(array(
 											 'type' => 'member',
@@ -472,7 +472,7 @@ class bpModDefaultContentTypes
 	/*******************************************************************************
 	 * group
 	 */
-	function group_info($id, $id2)
+	public static function group_info($id, $id2)
 	{
 		if (!$group = groups_get_group(array('group_id' => $id))) {
 			return false;
@@ -480,17 +480,17 @@ class bpModDefaultContentTypes
 		return array('author' => $group->creator_id, 'url' => bp_get_group_permalink($group), 'date' => $group->date_created);
 	}
 
-	function group_edit($id, $id2)
+	public static function group_edit($id, $id2)
 	{
 		return bp_get_group_permalink($id) . 'admin/edit-details/';
 	}
 
-	function group_delete($id, $id2)
+	public static function group_delete($id, $id2)
 	{
 		return !groups_get_group(array('group_id' => $id)) || groups_delete_group($id);
 	}
 
-	function group_print_link()
+	public static function group_print_link()
 	{
 		$group = $GLOBALS['bp']->groups->current_group;
 
@@ -520,7 +520,7 @@ class bpModDefaultContentTypes
 	 * forum_topic
 	 */
 
-	function forum_topic_info($id, $id2)
+	public static function forum_topic_info($id, $id2)
 	{
 		if (!$topic = bp_forums_get_topic_details($id2)) {
 			return false;
@@ -531,7 +531,7 @@ class bpModDefaultContentTypes
 		return array('author' => $topic->topic_poster, 'url' => $url, 'date' => $topic->topic_start_time);
 	}
 
-	function forum_topic_edit($id, $id2)
+	public static function forum_topic_edit($id, $id2)
 	{
 		if (!$topic = bp_forums_get_topic_details($id2)) {
 			return false;
@@ -542,12 +542,12 @@ class bpModDefaultContentTypes
 		return wp_nonce_url($url, 'bp_forums_edit_topic');
 	}
 
-	function forum_topic_delete($id, $id2)
+	public static function forum_topic_delete($id, $id2)
 	{
 		return !bp_forums_get_topic_details($id2) || groups_delete_group_forum_topic($id2);
 	}
 
-	function forum_topic_print_link()
+	public static function forum_topic_print_link()
 	{
 		$link = bpModFrontend::get_link(array(
 											 'type' => 'forum_topic',
@@ -564,7 +564,7 @@ class bpModDefaultContentTypes
 	 * forum_post
 	 */
 
-	function forum_post_info($id, $id2)
+	public static function forum_post_info($id, $id2)
 	{
 		if (!$post = bp_forums_get_post($id2)) {
 			return false;
@@ -576,7 +576,7 @@ class bpModDefaultContentTypes
 		return array('author' => $post->poster_id, 'url' => $url, 'date' => $post->post_time);
 	}
 
-	function forum_post_edit($id, $id2)
+	public static function forum_post_edit($id, $id2)
 	{
 		if (!$post = bp_forums_get_post($id2)) {
 			return false;
@@ -588,7 +588,7 @@ class bpModDefaultContentTypes
 		return wp_nonce_url($url, 'bp_forums_edit_post');
 	}
 
-	function forum_post_delete($id, $id2)
+	public static function forum_post_delete($id, $id2)
 	{
 		if (!$post = bp_forums_get_post($id2)) {
 			return true;
@@ -615,7 +615,7 @@ class bpModDefaultContentTypes
 		return true;
 	}
 
-	function forum_post_convert_activity_args($args)
+	public static function forum_post_convert_activity_args($args)
 	{
 
 		if ( ! function_exists( 'bp_forums_get_topic_posts' ) ) {
@@ -629,7 +629,7 @@ class bpModDefaultContentTypes
 		return $args;
 	}
 
-	function forum_post_print_link()
+	public static function forum_post_print_link()
 	{
 		global $topic_template, $bp;
 
@@ -649,7 +649,7 @@ class bpModDefaultContentTypes
 /*******************************************************************************
  * Private message sender
  */
-	function private_message_sender_print_links()
+	public static function private_message_sender_print_links()
 	{
 		$report_links = array();
 		foreach((array)$GLOBALS['thread_template']->thread->sender_ids as $sender_id) {
@@ -677,7 +677,7 @@ class bpModDefaultContentTypes
 /*******************************************************************************
  * Private message
  */
-	function private_message_info($thread_id, $sender_id)
+	public static function private_message_info($thread_id, $sender_id)
 	{
 		$thread = new BP_Messages_Thread($thread_id, 'DESC');
 		if (!in_array($sender_id, $thread->sender_ids)) {
@@ -694,7 +694,7 @@ class bpModDefaultContentTypes
 		return false;
 	}
 
-	function private_message_delete($thread_id, $sender_id)
+	public static function private_message_delete($thread_id, $sender_id)
 	{
 		global $wpdb, $bp;
 
@@ -715,7 +715,7 @@ class bpModDefaultContentTypes
 		return true;
 	}
 
-	function private_message_print_links()
+	public static function private_message_print_links()
 	{
 		$report_links = array();
 		foreach((array)$GLOBALS['thread_template']->thread->sender_ids as $sender_id) {
@@ -740,12 +740,12 @@ class bpModDefaultContentTypes
 		echo '</p>';
 	}
 	
-	function private_message_view_link_override($content) {
+	public static function private_message_view_link_override($content) {
 		$content->item_url = wp_nonce_url($content->item_url.'?bpmSuperAdminOverridePrivateMessage', 'bpmSuperAdminOverridePrivateMessage');
 		return $content;
 	}
 	
-	function private_message_super_admin_override() {
+	public static function private_message_super_admin_override() {
 		if(!isset($_GET['bpmSuperAdminOverridePrivateMessage']) || !is_super_admin()) {
 			return;
 		}
