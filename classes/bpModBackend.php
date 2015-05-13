@@ -24,7 +24,6 @@ class bpModBackend extends bpModeration
 		parent::__construct();
 
 		add_action(bp_core_admin_hook(), array(&$this, 'add_admin_menu'));
-		add_action('admin_head', array(&$this, 'print_page_icon_style'));
 		add_action('rightnow_end', array(&$this, 'rightnow_widget_section'));
 		add_action('admin_init', array(&$this, 'register_settings'));
 
@@ -41,26 +40,10 @@ class bpModBackend extends bpModeration
 	function add_admin_menu()
 	{
 		$hook = add_menu_page(__('BuddyPress Moderation', 'bp-moderation'), __('BP Moderation', 'bp-moderation'),
-			'manage_options', 'bp-moderation', array(&$this, 'admin_page'), 'div');
+			'manage_options', 'bp-moderation', array(&$this, 'admin_page'), 'dashicons-flag');
 
 		add_action("admin_print_styles-$hook", array(&$this, 'admin_css'));
 		add_action("admin_print_scripts-$hook", array(&$this, 'admin_js'));
-	}
-
-	function print_page_icon_style()
-	{
-		echo <<<HTML
-<style>
-ul#adminmenu li.toplevel_page_bp-moderation .wp-menu-image {
-    background-image: url('{$this->plugin_url}/css/sprite.png');
-    background-position: 6px 5px;
-}
-ul#adminmenu li.toplevel_page_bp-moderation:hover .wp-menu-image,
-ul#adminmenu li.toplevel_page_bp-moderation.current .wp-menu-image {
-    background-position: 6px -61px;
-}
-</style>
-HTML;
 	}
 
 	/**
