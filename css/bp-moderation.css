@@ -7,7 +7,6 @@
 	display: inline-block;
 	height: 16px;
 	line-height: 16px;
-	padding-left: 20px;
 	text-decoration: underline;
 }
 
@@ -21,16 +20,14 @@
 	padding-left: 0px;
 }
 
-.bpm-inner-text {
-	background: url(sprite.png) no-repeat;
+.bpm-report-link .dashicons-flag:before {
+	font-size: 16px;
+	padding-right: 4px;
+	vertical-align: bottom;
 }
 
-.bpm-unflagged .bpm-inner-text {
-	background-position: 0 0;
-}
-
-.bpm-flagged .bpm-inner-text {
-	background-position: 0 -66px;
+.bpm-flagged .dashicons-flag:before {
+	color: ##D81A1A;
 }
 
 .activity-meta .bpm-inner-text,

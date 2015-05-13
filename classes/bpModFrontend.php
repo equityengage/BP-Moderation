@@ -14,6 +14,7 @@ class bpModFrontend extends bpModeration
 
 		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, $this->plugin_ver, 'screen');
 		wp_enqueue_script('bp-moderation', $this->plugin_url . '/js/bp-moderation.js', array('jquery'), $this->plugin_ver, !'in footer');
+		wp_enqueue_style( 'dashicons' );
 
 		add_action('bp_activity_entry_meta', array(&$this, 'activity_loop_link'), 20);
 
@@ -166,6 +167,7 @@ class bpModFrontend extends bpModeration
 				$link .= $flagged ? 'bpm-flagged ' : 'bpm-unflagged ';
 				$link .= (empty($text) ? 'bpm-no-text ' : '');
 				$link .= "bpm-context-$context $custom_class' >";
+				$link .= "<span class='dashicons dashicons-flag'></span>";
 				$link .= "<span class='bpm-inner-text' >" . ($text ? $text : '&nbsp;') . "</span>";
 				$link .= "</a>";
 
