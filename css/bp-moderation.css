@@ -20,14 +20,14 @@
 	padding-left: 0px;
 }
 
-.bpm-report-link .dashicons-flag:before {
+.bpm-report-link .dashicons-flag::before {
 	font-size: 16px;
 	padding-right: 4px;
 	vertical-align: bottom;
 }
 
-.bpm-flagged .dashicons-flag:before {
-	color: ##D81A1A;
+.bpm-flagged .dashicons-flag::before {
+	color: #D81A1A;
 }
 
 .activity-meta .bpm-inner-text,
