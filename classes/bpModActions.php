@@ -11,6 +11,12 @@ class bpModActions extends bpModeration
 		parent::__construct();
 
 		add_action('bp_moderation_init', array(&$this, 'route_action'));
+
+		// notifications
+		if ( bp_is_active( 'notifications' ) ) {
+			add_action( 'bp_moderation_content_flagged',   array( $this, 'add_notification' ), 10, 2 );
+			add_action( 'bp_moderation_content_unflagged', array( $this, 'remove_notification' ), 10, 2 );
+		}
 	}
 
 	function route_action()
@@ -324,6 +330,53 @@ SQL;
 
 		return $count;
 
+	}
+
+	/**
+	 * Add a screen notification when a user is getting warned.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @param bpModObjContent $cont
+	 * @param bpModObjFlag    $flag
+	 */
+	public function add_notification( $cont, $flag ) {
+		$warning_threshold = $this->options['warning_threshold'];
+		$flag_count = $this->count_flags( $cont->content_id );
+
+		$add = false;
+		if ( $warning_threshold && $flag_count >= $warning_threshold) {
+			$add = true;
+		}
+
+		if ( false === $add ) {
+			return;
+		}
+
+		bp_notifications_add_notification( array(
+			'user_id'           => $cont->item_author,
+			'item_id'           => $flag->flag_id,
+			'secondary_item_id' => $flag->content_id,
+			'component_name'    => 'moderation',
+			'component_action'  => $cont->item_type,
+			'date_notified'     => $flag->date,
+			'is_new'            => 1,
+		) );
+	}
+
+	/**
+	 * Remove a screen notification when a user is getting warned.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @param bpModObjContent $cont
+	 * @param bpModObjFlag    $flag
+	 */
+	public function remove_notification( $cont, $flag ) {
+		BP_Notifications_Notification::delete( array(
+			'component_name' => 'moderation',
+			'item_id' => $flag->flag_id
+		) );
 	}
 }
 

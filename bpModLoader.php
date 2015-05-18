@@ -87,6 +87,12 @@ class bpModLoader
 		bpModLoader::load_class('bpModDefaultContentTypes');
 		bpModDefaultContentTypes::init($bpMod);
 
+		// notifications module
+		if ( bp_is_active( 'notifications' ) ) {
+			bpModLoader::load_class( 'bpModNotification' );
+			bpModNotification::init();
+		}
+
 		do_action('bp_moderation_loaded', array(&$this));
 
 		do_action('bp_moderation_init', array(&$bpMod));
