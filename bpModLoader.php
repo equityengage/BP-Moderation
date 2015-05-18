@@ -54,6 +54,10 @@ class bpModLoader
 	 */
 	function init()
 	{
+		// register ourselves into BP's active components
+		$GLOBALS['bp']->moderation = new stdClass;
+		$GLOBALS['bp']->active_components['moderation'] = 1;
+
 		if (is_admin() && !(defined('DOING_AJAX') && DOING_AJAX)) {
 			// if this is an admin page and the current user is not a site admin then the plugin doesn't load at all
 			if (!is_super_admin()) {
