@@ -36,7 +36,7 @@ class bpModNotification {
 
 		// use the notification callback set for each content type
 		if ( is_callable( $bpMod->content_types[$action]->callbacks['format_notification'] ) ) {
-			$array = call_user_func( $bpMod->content_types[$action]->callbacks['format_notification'], $action, $item_id, $secondary_item_id, $total_items );
+			$array = call_user_func( $bpMod->content_types[$action]->callbacks['format_notification'], $item_id, $secondary_item_id, $total_items );
 		}
 
 		// @todo Add a fallback notification instead of nothing
