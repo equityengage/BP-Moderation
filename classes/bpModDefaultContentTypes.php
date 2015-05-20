@@ -354,11 +354,10 @@ class bpModDefaultContentTypes
 	public static function blog_post_format_notification( $item_id, $content_id, $total_items ) {
 		$link = '';
 
-		// one blog post notification only
+		// set the read link for singular notifications
 		if ( 1 == $total_items ) {
 			$cont = new bpModObjContent( $content_id );
 
-			$text = __( 'One of your blog posts was flagged as inappropriate', 'bp-moderation' );
 			$link = add_query_arg(
 				array(
 					'bpmod_type' => 'post',
@@ -366,14 +365,9 @@ class bpModDefaultContentTypes
 				),
 				$cont->item_url
 			);
-
-		// more than one blog post notifications
-		} else {
-			$text = sprintf( __( '%d of your blog posts were flagged as inappropriate', 'bp-moderation' ), $total_items );
 		}
 
 		return array(
-			'text' => $text,
 			'link' => $link
 		);
 	}
