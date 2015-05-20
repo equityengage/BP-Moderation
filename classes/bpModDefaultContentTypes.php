@@ -28,6 +28,7 @@ class bpModDefaultContentTypes
 		//  status updates
 		$bpmod->content_types['status_update'] = new stdClass();
 		$bpmod->content_types['status_update']->label = __('Status update', 'bp-moderation');
+		$bpmod->content_types['status_update']->plural_label = __( 'Status updates', 'bp-moderation' );
 		$bpmod->content_types['status_update']->callbacks = array(
 			'info' => array(__CLASS__, 'activity_info'),
 			'delete' => array(__CLASS__, 'activity_delete')
@@ -41,6 +42,7 @@ class bpModDefaultContentTypes
 		//  status comments
 		$bpmod->content_types['activity_comment'] = new stdClass();
 		$bpmod->content_types['activity_comment']->label = __('Activity comment', 'bp-moderation');
+		$bpmod->content_types['activity_comment']->plural_label = __( 'Activity comments', 'bp-moderation' );
 		//callbacks are the same of status updates because both content types stay in the activity table
 		$bpmod->content_types['activity_comment']->callbacks = array(
 			'info' => array(__CLASS__, 'activity_comment_info'),
@@ -56,6 +58,7 @@ class bpModDefaultContentTypes
 		//  blog posts
 		$bpmod->content_types['blog_post'] = new stdClass();
 		$bpmod->content_types['blog_post']->label = __('Blog post', 'bp-moderation');
+		$bpmod->content_types['blog_post']->plural_label = __( 'Blog posts', 'bp-moderation' );
 		$bpmod->content_types['blog_post']->callbacks = array(
 			'info' => array(__CLASS__, 'blog_post_info'),
 			'edit' => array(__CLASS__, 'blog_post_edit'),
@@ -73,6 +76,7 @@ class bpModDefaultContentTypes
 		//  blog page
 		$bpmod->content_types['blog_page'] = new stdClass();
 		$bpmod->content_types['blog_page']->label = __('Blog page', 'bp-moderation');
+		$bpmod->content_types['blog_page']->plural_label = __( 'Pages', 'bp-moderation' );
 		$bpmod->content_types['blog_page']->callbacks = array(
 			'info' => array(__CLASS__, 'blog_post_info'),
 			'edit' => array(__CLASS__, 'blog_post_edit'),
@@ -87,6 +91,7 @@ class bpModDefaultContentTypes
 		//  blog comments
 		$bpmod->content_types['blog_comment'] = new stdClass();
 		$bpmod->content_types['blog_comment']->label = __('Blog comment', 'bp-moderation');
+		$bpmod->content_types['blog_comment']->plural_label = __( 'Blog comments', 'bp-moderation' );
 		$bpmod->content_types['blog_comment']->callbacks = array(
 			'info' => array(__CLASS__, 'blog_comment_info'),
 			'edit' => array(__CLASS__, 'blog_comment_edit'),
@@ -170,6 +175,7 @@ class bpModDefaultContentTypes
 		//  private message
 		$bpmod->content_types['private_message'] = new stdClass();
 		$bpmod->content_types['private_message']->label = __('Private message', 'bp-moderation');
+		$bpmod->content_types['private_message']->plural_label = __( 'Private messages', 'bp-moderation' );
 		$bpmod->content_types['private_message']->callbacks = array(
 			'info' => array(__CLASS__, 'private_message_info'),
 			'delete' => array(__CLASS__, 'private_message_delete')
