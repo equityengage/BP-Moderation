@@ -347,7 +347,7 @@ class bpModDefaultContentTypes
 
 		$url = home_url("?p=$comment->comment_post_ID#comment-$id2");
 		$user = get_user_by('email', $comment->comment_author_email);
-		$author = (int)$user->ID;
+		$author = ! empty( $user->ID ) ? (int) $user->ID : 0;
 
 		restore_current_blog();
 
