@@ -155,6 +155,80 @@ class bpModAbstractDBobj
 	}
 
 	/**
+	 * get()
+	 *
+	 * This method will return results based on search criteria.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @param array $r {
+	 *     Array of arguments.
+	 *     @type array $select Column names as array values to select. Also supports '*' as value.
+	 *                         eg. array( 'content_id', 'item_type' )
+	 *     @type array $where  Column names as array key, array values as search term. Supports only
+	 *                         EQUALS comparisons at the moment.
+	 *                         eg. array( 'item_id' => 123, 'item_id2' => 456 ) equates to:
+	 *                             'item_id = 123 AND item_id2 = 456'
+	 * }
+	 * @return mixed
+	 */
+	public function get( $r = array() ) {
+		global $wpdb;
+
+		$r = array_merge( array(
+			'select' => array( '*' ),
+			'where'  => array(),
+		), $r );
+
+		// SELECT
+		$select_sql = '';
+		if ( ! empty( $r['select'] ) ) {
+			// validate SELECT columns
+			$r['select'] = array_values(
+				array_intersect(
+					array_merge( array_keys( $this->__fields_format ),
+					array( '*', $this->__id_field )
+				),
+				$r['select']
+			) );
+
+			if ( ! empty( $r['select'] ) ) {
+				$select_sql = 'SELECT ' . join( ',', $r['select'] );
+			} else {
+				$r['select'] = array( '*' );
+			}
+
+		}
+		if ( empty( $select_sql ) ) {
+			$select_sql = "SELECT *";
+		}
+
+		// FROM
+		$from_sql = "FROM {$this->__table}";
+
+		// WHERE
+		$where_sql = '';
+		$where = array();
+		if ( ! empty( $r['where'] ) ) {
+			// Validate WHERE columns
+			foreach ( (array) $r['where'] as $k => $v ) {
+				if ( isset( $this->__fields_format[$k] ) ) {
+					$where[] = $wpdb->prepare( "{$k} = " . $this->__fields_format[$k], $r['where'][$k] );
+				}
+			}
+		}
+		if ( ! empty( $where ) ) {
+			$where_sql = 'WHERE ' . join( ' AND ', $where );
+		}
+
+		if ( array( '*' ) === $r['select'] || count( $r['select'] ) > 1 ) {
+			return $wpdb->get_results( "{$select_sql} {$from_sql} {$where_sql}" );
+		} else {
+			return $wpdb->get_var( "{$select_sql} {$from_sql} {$where_sql}" );
+		}
+	}
+
+	/**
 	 * give a more covenient way of storing fields value without have to remember
 	 * where they are stored
 	 *
