@@ -15,7 +15,7 @@ class bpModActions extends bpModeration
 		// notifications
 		if ( bp_is_active( 'notifications' ) ) {
 			add_action( 'bp_moderation_content_flagged',   array( $this, 'add_notification' ), 10, 2 );
-			add_action( 'bp_moderation_content_unflagged', array( $this, 'remove_notification' ), 10, 2 );
+			add_action( 'bp_moderation_content_unflagged', array( $this, 'remove_notification' ), 10, 6 );
 		}
 	}
 
@@ -378,10 +378,14 @@ SQL;
 	 *
 	 * @since 0.2.0
 	 *
-	 * @param bpModObjContent $cont
-	 * @param bpModObjFlag    $flag
+	 * @param string        $type
+	 * @param int           $id
+	 * @param int           $id2
+	 * @param int           $reporter
+	 * @param int           $cont_id
+	 * @param bpModObjFlag  $flag
 	 */
-	public function remove_notification( $cont, $flag ) {
+	public function remove_notification( $type, $id, $id2, $reporter, $cont_id, $flag ) {
 		BP_Notifications_Notification::delete( array(
 			'component_name' => 'moderation',
 			'item_id' => $flag->flag_id
