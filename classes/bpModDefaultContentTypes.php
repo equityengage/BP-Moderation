@@ -59,7 +59,9 @@ class bpModDefaultContentTypes
 		$bpmod->content_types['blog_post']->callbacks = array(
 			'info' => array(__CLASS__, 'blog_post_info'),
 			'edit' => array(__CLASS__, 'blog_post_edit'),
-			'delete' => array(__CLASS__, 'blog_post_delete')
+			'delete' => array(__CLASS__, 'blog_post_delete'),
+			'format_notification' => array( __CLASS__, 'blog_post_format_notification' ),
+			'mark_notification'   => array( __CLASS__, 'blog_post_mark_notification' )
 		);
 
 		if (isset ($init_types['blog_post'])) {
@@ -331,6 +333,95 @@ class bpModDefaultContentTypes
 										));
 
 		return "$content\n\n$link";
+	}
+
+	/**
+	 * Format blog post notifications.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @param int    $flag_id     The BP moderation flag ID.
+	 * @param int    $content_id  The BP moderation content ID.
+	 * @param int    $total_items The total number of notifications to format.
+	 * @return array Array with 'text' and 'link' set as keys.
+	 */
+	public static function blog_post_format_notification( $item_id, $content_id, $total_items ) {
+		$link = '';
+
+		// one blog post notification only
+		if ( 1 == $total_items ) {
+			$cont = new bpModObjContent( $content_id );
+
+			$text = __( 'One of your blog posts was flagged as inappropriate', 'bp-moderation' );
+			$link = add_query_arg(
+				array(
+					'bpmod_type' => 'post',
+					'bpmod_flag' => $item_id
+				),
+				$cont->item_url
+			);
+
+		// more than one blog post notifications
+		} else {
+			$text = sprintf( __( '%d of your blog posts were flagged as inappropriate', 'bp-moderation' ), $total_items );
+		}
+
+		return array(
+			'text' => $text,
+			'link' => $link
+		);
+	}
+
+	/**
+	 * Mark blog post notification as read when a user lands on the blog post.
+	 *
+	 * @since 0.2.0
+	 */
+	public static function blog_post_mark_notification() {
+		// check if we're on a blog post and if user is logged in
+		if ( false === is_singular( 'post' ) || false === is_user_logged_in() ) {
+			return;
+		}
+
+		// check our special querystring parameters
+		if ( empty( $_GET['bpmod_type'] ) || ( ! empty( $_GET['bpmod_type'] ) && 'post' !== $_GET['bpmod_type'] ) ) {
+			return;
+		}
+		if ( empty( $_GET['bpmod_flag'] ) ) {
+			return;
+		}
+
+		// load up DB class
+		bpModLoader::load_class( 'bpModObjContent' );
+
+		// grab the content ID
+		$content = new bpModObjContent();
+		$content_id = $content->get( array(
+			'select' => array( 'content_id' ),
+			'where' => array(
+				'item_type' => 'blog_post',
+				'item_id'   => get_current_blog_id(),
+				'item_id2'  => get_the_ID()
+			)
+		) );
+
+		if ( empty( $content_id ) ) {
+			return;
+		}
+
+		// mark notification as read
+		BP_Notifications_Notification::update(
+			array(
+				'is_new' => false
+			),
+			array(
+				'user_id'           => bp_loggedin_user_id(),
+				'item_id'           => (int) $_GET['bpmod_flag'],
+				'secondary_item_id' => $content_id,
+				'component_name'    => 'moderation',
+				'component_action'  => 'blog_post'
+			)
+		);
 	}
 
 	/*******************************************************************************
