@@ -353,6 +353,15 @@ SQL;
 			return;
 		}
 
+		// do not add notifications for the following types
+		// @todo make this filterable
+		switch ( $cont->item_type ) {
+			case 'member' :
+			case 'private_message_sender' :
+				return;
+				break;
+		}
+
 		bp_notifications_add_notification( array(
 			'user_id'           => $cont->item_author,
 			'item_id'           => $flag->flag_id,
