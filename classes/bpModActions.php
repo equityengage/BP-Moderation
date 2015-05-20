@@ -349,7 +349,7 @@ SQL;
 			$add = true;
 		}
 
-		if ( false === $add ) {
+		if ( false === $add || 0 === (int) $cont->item_author ) {
 			return;
 		}
 
