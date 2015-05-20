@@ -42,7 +42,8 @@ class bpModLoader
 	{
 		$this->basename = plugin_basename(dirname(__FILE__));
 
-		add_action('bp_init', array($this, 'init'));
+		add_action('bp_setup_globals', array( $this, 'setup_globals' ) );
+		add_action('bp_init', array( $this, 'init' ) );
 
 		register_activation_hook(__FILE__, array($this, 'call_activate'));
 
@@ -50,14 +51,26 @@ class bpModLoader
 	}
 
 	/**
-	 * Load needed class
+	 * Setup globals.
+	 *
+	 * @since 0.2.0
 	 */
-	function init()
-	{
+	public function setup_globals() {
 		// register ourselves into BP's active components
 		$GLOBALS['bp']->moderation = new stdClass;
 		$GLOBALS['bp']->active_components['moderation'] = 1;
 
+		// notifications module
+		if ( bp_is_active( 'notifications' ) ) {
+			bpModLoader::load_class( 'bpModNotification' );
+			bpModNotification::init();
+		}
+	}
+
+	/**
+	 * Init.
+	 */
+	public function init() {
 		if (is_admin() && !(defined('DOING_AJAX') && DOING_AJAX)) {
 			// if this is an admin page and the current user is not a site admin then the plugin doesn't load at all
 			if (!is_super_admin()) {
@@ -86,12 +99,6 @@ class bpModLoader
 		//load the default content types
 		bpModLoader::load_class('bpModDefaultContentTypes');
 		bpModDefaultContentTypes::init($bpMod);
-
-		// notifications module
-		if ( bp_is_active( 'notifications' ) ) {
-			bpModLoader::load_class( 'bpModNotification' );
-			bpModNotification::init();
-		}
 
 		do_action('bp_moderation_loaded', array(&$this));
 
