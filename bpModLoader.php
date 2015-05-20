@@ -55,11 +55,6 @@ class bpModLoader
 	function init()
 	{
 		if (is_admin() && !(defined('DOING_AJAX') && DOING_AJAX)) {
-			// if this is an admin page and the current user is not a site admin then the plugin doesn't load at all
-			if (!is_super_admin()) {
-				return;
-			}
-
 			if (!empty($_REQUEST['bpmod-action'])) {
 				$mainclass = 'bpModBackendActions';
 			} else {
