@@ -27,7 +27,10 @@ class bpModNotification {
 	 * @return string $return Formatted notification.
 	 */
 	public static function format( $action, $item_id, $secondary_item_id, $total_items, $format = 'string' ) {
-		$array = array();
+		$array = array(
+			'link' => '',
+			'text' => ''
+		);
 
 		// load up DB class
 		bpModLoader::load_class( 'bpModObjContent' );
@@ -39,9 +42,31 @@ class bpModNotification {
 			$array = call_user_func( $bpMod->content_types[$action]->callbacks['format_notification'], $item_id, $secondary_item_id, $total_items );
 		}
 
-		// @todo Add a fallback notification instead of nothing
-		if ( empty( $array ) ) {
-			return;
+		// Fallback text
+		if ( empty( $array['text'] ) ) {
+			$plural_label = ! empty( $bpMod->content_types[$action]->plural_label ) ? $bpMod->content_types[$action]->plural_label : __( 'items', 'bp-moderation' );
+			$plural_label = strtolower( $plural_label );
+
+			// one item only
+			if ( 1 == $total_items ) {
+				$text = sprintf( __( 'One of your %s was flagged as inappropriate', 'bp-moderation' ), $plural_label );
+
+			// more than one of the same item
+			} else {
+				$text = sprintf( __( '%d of your %s were flagged as inappropriate', 'bp-moderation' ), $total_items, $plural_label );
+			}
+
+			$array['text'] = $text;
+		}
+
+		// Fallback singular link
+		if ( empty( $array['link'] ) ) {
+			// one item only
+			if ( 1 == $total_items ) {
+				$cont = new bpModObjContent( $secondary_item_id );
+
+				$array['link'] = $cont->item_url;
+			}
 		}
 
 		// security
