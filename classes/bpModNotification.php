@@ -14,6 +14,11 @@ class bpModNotification {
 
 		// mark notifications
 		add_action( 'bp_actions', array( __CLASS__, 'mark' ) );
+
+		// filter unread notifications by action
+		if ( ! has_filter( 'bp_after_has_notifications_parse_args', 'bp_follow_filter_unread_notifications' ) ) {
+			add_filter( 'bp_after_has_notifications_parse_args', array( __CLASS__, 'filter_unread_notifications' ) );
+		}
 	}
 
 	/**
@@ -103,6 +108,38 @@ class bpModNotification {
 				call_user_func( $action );
 			}
 		}
+	}
+
+	/**
+	 * Filter notifications by component action.
+	 *
+	 * Only applicable in BuddyPress 2.1+.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array $retval Current notification parameters.
+	 * @return array
+	 */
+	public static function filter_unread_notifications( $retval ) {
+		// make sure we're on a user's notification page
+		if ( ! bp_is_user_notifications() ) {
+			return $retval;
+		}
+
+		// make sure we're doing this for the main notifications loop
+		if ( ! did_action( 'bp_before_member_body' ) ) {
+			return $retval;
+		}
+
+		// filter notifications by action
+		if ( ! empty( $_GET['action'] ) ) {
+			$retval['component_action'] = sanitize_title( $_GET['action'] );
+
+			// remove this filter to prevent any other notification loop getting filtered
+			remove_filter( 'bp_after_has_notifications_parse_args', array( __CLASS__, 'filter_unread_notifications' ) );
+		}
+
+		return $retval;
 	}
 
 	/**
