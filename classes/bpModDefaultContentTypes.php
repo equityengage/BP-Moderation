@@ -62,9 +62,7 @@ class bpModDefaultContentTypes
 		$bpmod->content_types['blog_post']->callbacks = array(
 			'info' => array(__CLASS__, 'blog_post_info'),
 			'edit' => array(__CLASS__, 'blog_post_edit'),
-			'delete' => array(__CLASS__, 'blog_post_delete'),
-			'format_notification' => array( __CLASS__, 'blog_post_format_notification' ),
-			'mark_notification'   => array( __CLASS__, 'blog_post_mark_notification' )
+			'delete' => array(__CLASS__, 'blog_post_delete')
 		);
 
 		if (isset ($init_types['blog_post'])) {
@@ -339,37 +337,6 @@ class bpModDefaultContentTypes
 										));
 
 		return "$content\n\n$link";
-	}
-
-	/**
-	 * Format blog post notifications.
-	 *
-	 * @since 0.2.0
-	 *
-	 * @param int    $flag_id     The BP moderation flag ID.
-	 * @param int    $content_id  The BP moderation content ID.
-	 * @param int    $total_items The total number of notifications to format.
-	 * @return array Array with 'text' and 'link' set as keys.
-	 */
-	public static function blog_post_format_notification( $item_id, $content_id, $total_items ) {
-		$link = '';
-
-		// set the read link for singular notifications
-		if ( 1 == $total_items ) {
-			$cont = new bpModObjContent( $content_id );
-
-			$link = add_query_arg(
-				array(
-					'bpmod_type' => 'post',
-					'bpmod_flag' => $item_id
-				),
-				$cont->item_url
-			);
-		}
-
-		return array(
-			'link' => $link
-		);
 	}
 
 	/*******************************************************************************
