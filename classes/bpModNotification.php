@@ -71,6 +71,15 @@ class bpModNotification {
 				$cont = new bpModObjContent( $secondary_item_id );
 
 				$array['link'] = $cont->item_url;
+
+				// add our custom query args for marking notifications as read
+				$array['link'] = add_query_arg(
+					array(
+						'bpmod_flag' => $item_id,
+						'bpmod_cont' => $secondary_item_id
+					),
+					$array['link']
+				);
 			}
 		}
 
@@ -92,22 +101,49 @@ class bpModNotification {
 	}
 
 	/**
-	 * Let plugins run their mark notification routine.
+	 * Mark notification as read when a user clicks on the notification action link.
+	 *
+	 * @since 0.2.0
 	 */
 	public static function mark() {
-		$bpMod =& bpModeration::get_istance();
-
-		// convert object to array
-		$mark_actions = json_decode( json_encode( $bpMod->content_types ), true );
-
-		// grab all 'mark_notification' callbacks
-		$mark_actions = self::array_column_recursive( $mark_actions, 'mark_notification' );
-
-		foreach ( $mark_actions as $action ) {
-			if ( is_callable( $action ) ) {
-				call_user_func( $action );
-			}
+		// bail if URL doesn't contain our bpMod variables or if user isn't logged in
+		if ( empty( $_GET['bpmod_flag'] ) || empty( $_GET['bpmod_cont'] ) || ! is_user_logged_in() ) {
+			return;
 		}
+
+		// load up DB classes
+		bpModLoader::load_class( 'bpModObjContent' );
+		bpModLoader::load_class( 'bpModObjFlag' );
+
+		$cont = new bpModObjContent( (int) $_GET['bpmod_cont'] );
+
+		// bail if logged-in user doesn't match notification user or if user cannot moderate
+		$bail = true;
+		if ( (int) $cont->item_author === bp_loggedin_user_id() || current_user_can( 'bp_moderate' ) ) {
+			$bail = false;
+		}
+		if ( true === $bail ) {
+			return;
+		}
+
+		// check if flag exists
+		$flag = new bpModObjFlag( (int) $_GET['bpmod_flag'] );
+		if ( is_null( $flag->flag_id ) ) {
+			return;
+		}
+
+		// mark notification as read
+		BP_Notifications_Notification::update(
+			array(
+				'is_new' => false
+			),
+			array(
+				'user_id'           => bp_loggedin_user_id(),
+				'item_id'           => (int) $flag->flag_id,
+				'secondary_item_id' => (int) $cont->content_id,
+				'component_name'    => 'moderation'
+			)
+		);
 	}
 
 	/**
