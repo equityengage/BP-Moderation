@@ -372,58 +372,6 @@ class bpModDefaultContentTypes
 		);
 	}
 
-	/**
-	 * Mark blog post notification as read when a user lands on the blog post.
-	 *
-	 * @since 0.2.0
-	 */
-	public static function blog_post_mark_notification() {
-		// check if we're on a blog post and if user is logged in
-		if ( false === is_singular( 'post' ) || false === is_user_logged_in() ) {
-			return;
-		}
-
-		// check our special querystring parameters
-		if ( empty( $_GET['bpmod_type'] ) || ( ! empty( $_GET['bpmod_type'] ) && 'post' !== $_GET['bpmod_type'] ) ) {
-			return;
-		}
-		if ( empty( $_GET['bpmod_flag'] ) ) {
-			return;
-		}
-
-		// load up DB class
-		bpModLoader::load_class( 'bpModObjContent' );
-
-		// grab the content ID
-		$content = new bpModObjContent();
-		$content_id = $content->get( array(
-			'select' => array( 'content_id' ),
-			'where' => array(
-				'item_type' => 'blog_post',
-				'item_id'   => get_current_blog_id(),
-				'item_id2'  => get_the_ID()
-			)
-		) );
-
-		if ( empty( $content_id ) ) {
-			return;
-		}
-
-		// mark notification as read
-		BP_Notifications_Notification::update(
-			array(
-				'is_new' => false
-			),
-			array(
-				'user_id'           => bp_loggedin_user_id(),
-				'item_id'           => (int) $_GET['bpmod_flag'],
-				'secondary_item_id' => $content_id,
-				'component_name'    => 'moderation',
-				'component_action'  => 'blog_post'
-			)
-		);
-	}
-
 	/*******************************************************************************
 	 * blog_comment
 	 */
