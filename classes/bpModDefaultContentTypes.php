@@ -304,7 +304,7 @@ class bpModDefaultContentTypes
 	{
 		global $post, $wpcommentspopupfile, $wpcommentsjavascript;
 
-		if ('post' != $post->post_type) {
+		if ('post' != $post->post_type || ! is_user_logged_in() ) {
 			return $content;
 		}
 
