@@ -67,7 +67,8 @@ class bpModDefaultContentTypes
 
 		if (isset ($init_types['blog_post'])) {
 			$bpmod->types_map['new_blog_post'] = 'blog_post';
-			add_filter('comments_popup_link_attributes', array(__CLASS__, 'blog_post_append_link'));
+			add_filter('the_content', array(__CLASS__, 'blog_post_append_link'));
+			add_filter('the_excerpt', array(__CLASS__, 'blog_post_append_link'));
 		}
 
 		//  blog page
@@ -302,47 +303,21 @@ class bpModDefaultContentTypes
 
 	public static function blog_post_append_link($content)
 	{
-		global $post, $wpcommentspopupfile, $wpcommentsjavascript;
+		global $wpdb, $post;
 
-		if ('post' != $post->post_type || ! is_user_logged_in() ) {
+		if ('post' != $post->post_type) {
 			return $content;
 		}
 
-		// tomfoolery! :)
-		$trace = debug_backtrace();
-		if ( 'comments_popup_link' !== $trace[3]['function'] ) {
-			return $content;
-		}
+		$link = bpModFrontend::get_link(array(
+											 'type' => 'blog_post',
+											 'author_id' => $post->post_author,
+											 'id' => $wpdb->blogid,
+											 'id2' => $post->ID,
+											 'unflagged_text' => __('Flag this post as inappropriate', 'bp-moderation')
+										));
 
-		// duplicate of comments_popup_link()
-		$link = '';
-		if ( $wpcommentsjavascript ) {
-			if ( empty( $wpcommentspopupfile ) )
-				$home = home_url();
-			else
-				$home = get_option('siteurl');
-			$link = $home . '/' . $wpcommentspopupfile . '?comments_popup=' . $post->ID;
-			$link .= '" onclick="wpopen(this.href); return false"';
-		} else { // if comments_popup_script() is not in the template, display simple comment link
-			$number = get_comments_number( $post->ID );
-			if ( 0 == $number )
-				$link = get_permalink() . '#respond';
-			else
-				$link = esc_url( get_comments_link() );
-		}
-		// end duplicate
-
-		$css_class = isset( $trace[3]['args'][3] ) ? $trace[3]['args'][3] : '';
-
-		$mod_link = bpModFrontend::get_link(array(
-			 'type' => 'blog_post',
-			 'author_id' => $post->post_author,
-			 'id' => get_current_blog_id(),
-			 'id2' => $post->ID,
-			 'unflagged_text' => __('Flag this post as inappropriate', 'bp-moderation')
-		));
-
-		return "></a>{$mod_link} &middot; <a href=\"{$link}\" class=\"{$link}\" {$content}";
+		return "$content\n\n$link";
 	}
 
 	public static function blog_page_append_link($content)
