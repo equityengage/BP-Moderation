@@ -321,14 +321,14 @@ class bpModDefaultContentTypes
 				$home = home_url();
 			else
 				$home = get_option('siteurl');
-			$link = $home . '/' . $wpcommentspopupfile . '?comments_popup=' . $id;
+			$link = $home . '/' . $wpcommentspopupfile . '?comments_popup=' . $post->ID;
 			$link .= '" onclick="wpopen(this.href); return false"';
 		} else { // if comments_popup_script() is not in the template, display simple comment link
+			$number = get_comments_number( $post->ID );
 			if ( 0 == $number )
 				$link = get_permalink() . '#respond';
 			else
 				$link = esc_url( get_comments_link() );
-			$link .= '"';
 		}
 		// end duplicate
 
