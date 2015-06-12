@@ -16,6 +16,11 @@ class bpModActions extends bpModeration
 		if ( bp_is_active( 'notifications' ) ) {
 			add_action( 'bp_moderation_content_flagged',   array( $this, 'add_notification' ), 10, 2 );
 			add_action( 'bp_moderation_content_unflagged', array( $this, 'remove_notification' ), 10, 6 );
+
+			// notifiy sub-site admin when a blog type item is flagged
+			if ( true === (bool) apply_filters( 'bp_moderation_notify_admin', true ) ) {
+				add_action( 'bp_moderation_content_flagged', array( $this, 'notify_admin' ), 10, 2 );
+			}
 		}
 	}
 
@@ -391,6 +396,67 @@ SQL;
 			'item_id' => $flag->flag_id
 		) );
 	}
-}
 
-?>
+	/**
+	 * Notify the sub-site admin when a blog type item is flagged.
+	 *
+	 * @since 0.2.0
+	 *
+	 * @param bpModObjContent $cont
+	 * @param bpModObjFlag    $flag
+	 */
+	public function notify_admin( $cont, $flag ) {
+		$email = get_option( 'admin_email' );
+		if ( false === is_email( $email ) ) {
+			return;
+		}
+
+		$user = get_user_by( 'email', $email );
+
+		// do not notify if logged-in user matches the admin user
+		if ( $user instanceof WP_User && (int) get_current_user_id() === (int) $user->ID ) {
+			return;
+		}
+
+		switch ( $cont->item_type ) {
+			// only notify sub-site admin for the following types for now
+			case 'blog_post' :
+			case 'blog_comment' :
+			case 'blog_page' :
+				break;
+
+			// bail
+			default :
+				return;
+				break;
+		}
+
+		$type = str_replace( '_', ' ', $cont->item_type );
+
+		// send the email
+		wp_mail(
+			$email,
+			bp_get_email_subject( array(
+				'text' => sprintf(
+					__( 'A %s was just flagged on your site', 'bp-site-moderation' ),
+					$type
+				)
+			) ),
+			sprintf(
+				__( 'Hi,
+
+A %1$s was just flagged on your site.
+
+You can view the flagged item here:
+%2$s
+
+The %1$s was reported by the user, %3$s:
+%4$s', 'bp-moderation' ),
+				$type,
+				$cont->item_url,
+				bp_core_get_username( $flag->reporter_id ),
+				bp_core_get_user_domain( $flag->reporter_id )
+			)
+		);
+	}
+}
