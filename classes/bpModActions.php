@@ -431,14 +431,16 @@ SQL;
 				break;
 		}
 
-		$type = str_replace( '_', ' ', $cont->item_type );
+		$bpMod =& bpModeration::get_istance();
+
+		$type = ! empty( $bpMod->content_types[$cont->item_type]->label ) ? strtolower( $bpMod->content_types[$cont->item_type]->label ) : str_replace( '_', ' ', $cont->item_type );
 
 		// send the email
 		wp_mail(
 			$email,
 			bp_get_email_subject( array(
 				'text' => sprintf(
-					__( 'A %s was just flagged on your site', 'bp-site-moderation' ),
+					__( 'A %s was just flagged on your site', 'bp-moderation' ),
 					$type
 				)
 			) ),
