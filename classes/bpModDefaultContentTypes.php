@@ -314,7 +314,6 @@ class bpModDefaultContentTypes
 											 'author_id' => $post->post_author,
 											 'id' => $wpdb->blogid,
 											 'id2' => $post->ID,
-											 'unflagged_text' => __('Flag this post as inappropriate', 'bp-moderation')
 										));
 
 		return "$content\n\n$link";
@@ -333,7 +332,6 @@ class bpModDefaultContentTypes
 											 'author_id' => $post->post_author,
 											 'id' => $wpdb->blogid,
 											 'id2' => $post->ID,
-											 'unflagged_text' => __('Flag this page as inappropriate', 'bp-moderation')
 										));
 
 		return "$content\n\n$link";
@@ -410,7 +408,6 @@ class bpModDefaultContentTypes
 											 'author_id' => $comment->user_id,
 											 'id' => $wpdb->blogid,
 											 'id2' => $comment->comment_ID,
-											 'unflagged_text' => __('Flag this comment as inappropriate', 'bp-moderation')
 										));
 
 		return $comment_text . "\n\n$link";
@@ -644,7 +641,6 @@ class bpModDefaultContentTypes
 											 'author_id' => $topic_template->post->poster_id,
 											 'id' => $bp->groups->current_group->id,
 											 'id2' => $topic_template->post->post_id,
-											 'unflagged_text' => __('Flag', 'bp-moderation'),
 											 'custom_class' => 'bpm-no-images'
 										));
 
