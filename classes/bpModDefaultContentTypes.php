@@ -309,6 +309,11 @@ class bpModDefaultContentTypes
 			return $content;
 		}
 
+		// do not run this function twice on archive pages
+		if ( is_archive() && 'the_content' === current_filter() ) {
+			return $content;
+		}
+
 		$link = bpModFrontend::get_link(array(
 											 'type' => 'blog_post',
 											 'author_id' => $post->post_author,
