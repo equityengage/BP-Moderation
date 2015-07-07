@@ -303,8 +303,8 @@ class bpModDefaultContentTypes
 			return $content;
 		}
 
-		// do not run this function twice on archive pages
-		if ( is_archive() && 'the_content' === current_filter() ) {
+		// do not run this function twice on homepage or archive pages
+		if ( ( is_archive() || is_home() ) && 'the_content' === current_filter() ) {
 			return $content;
 		}
 
