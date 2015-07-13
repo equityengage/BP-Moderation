@@ -15,7 +15,7 @@ class bpModAbstractCore
 	 *
 	 * @var string
 	 */
-	var $plugin_ver = '0.1.8-dev';
+	var $plugin_ver = '0.1.8-dev-2';
 
 	/**
 	 * database tables & options version
