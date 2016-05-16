@@ -20,6 +20,11 @@ class bpModFrontend extends bpModeration
 	 * Enqueue assets.
 	 */
 	function enqueue_assets() {
+		// Do not enqueue assets on embed items.
+		if ( true === function_exists( 'is_embed' ) && true === is_embed() )  {
+			return;
+		}
+
 		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, $this->plugin_ver, 'screen');
 		wp_enqueue_script('bp-moderation', $this->plugin_url . '/js/bp-moderation.js', array('jquery'), $this->plugin_ver, !'in footer');
 		wp_enqueue_style( 'dashicons' );
