@@ -10,15 +10,19 @@ class bpModFrontend extends bpModeration
 
 	function  __construct()
 	{
-		parent::__construct();
-
-		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, $this->plugin_ver, 'screen');
-		wp_enqueue_script('bp-moderation', $this->plugin_url . '/js/bp-moderation.js', array('jquery'), $this->plugin_ver, !'in footer');
-		wp_enqueue_style( 'dashicons' );
-
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action('bp_activity_entry_meta', array(&$this, 'activity_loop_link'), 20);
 
 		$this->already_flagged = $this->already_flagged_by_current_user();
+	}
+
+	/**
+	 * Enqueue assets.
+	 */
+	function enqueue_assets() {
+		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, $this->plugin_ver, 'screen');
+		wp_enqueue_script('bp-moderation', $this->plugin_url . '/js/bp-moderation.js', array('jquery'), $this->plugin_ver, !'in footer');
+		wp_enqueue_style( 'dashicons' );
 	}
 
 	/**
