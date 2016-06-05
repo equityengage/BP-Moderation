@@ -10,6 +10,8 @@ class bpModFrontend extends bpModeration
 
 	function  __construct()
 	{
+		parent::__construct();
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action('bp_activity_entry_meta', array(&$this, 'activity_loop_link'), 20);
 
