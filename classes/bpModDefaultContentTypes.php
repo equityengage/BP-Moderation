@@ -179,7 +179,7 @@ class bpModDefaultContentTypes
 			'delete' => array(__CLASS__, 'private_message_delete')
 		);
 		if (isset ($init_types['private_message'])) {
-			add_action('bp_after_message_thread_list', array(__CLASS__, 'private_message_print_links'));
+			add_action('bp_after_message_content', array(__CLASS__, 'private_message_print_links'));
 		}
 		add_filter('bp_moderation_filter_content_backend_for_private_message', array(__CLASS__, 'private_message_view_link_override'));
 		add_action('messages_action_view_message', array(__CLASS__, 'private_message_super_admin_override'));
@@ -724,26 +724,21 @@ class bpModDefaultContentTypes
 
 	public static function private_message_print_links()
 	{
-		$report_links = array();
-		foreach((array)$GLOBALS['thread_template']->thread->sender_ids as $sender_id) {
-			if ($sender_id != bp_loggedin_user_id()) {
-				$report_links[] = bpModFrontend::get_link(array(
+		$sender_id = bp_get_the_thread_message_sender_id();
+		if ( $sender_id == bp_loggedin_user_id() ) {
+			return;
+		}
+
+		$report_link = bpModFrontend::get_link(array(
 										'type' => 'private_message',
 										'id' => bp_get_the_thread_id(),
 										'id2' => $sender_id,
-										'unflagged_text' => bp_core_get_user_displayname($sender_id),
-										'flagged_text' => bp_core_get_user_displayname($sender_id),
+										'unflagged_text' => __('Flag message', 'bp-moderation'),
 										'custom_class' => 'button'
 									));
-			}
-		}
-		
-		if (!count($report_links)) {
-			return;
-		}
-		
+
 		echo '<p class="bp-mod-pm-thread-links">';
-		printf(__('Flag as inappropriate messages by: %s', 'bp-moderation'),join(' ', $report_links));
+		echo $report_link;
 		echo '</p>';
 	}
 	
