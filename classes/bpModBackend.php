@@ -27,6 +27,15 @@ class bpModBackend extends bpModeration
 		add_action('rightnow_end', array(&$this, 'rightnow_widget_section'));
 		add_action('admin_init', array(&$this, 'register_settings'));
 
+		// Add a "date_registered" column to the WP Users list table.
+		// Useful for moderating recently registered users.
+		add_filter( 'manage_users_columns', array( $this, 'add_date_registered_column') );
+		// Populate our new column in the WP Users list table.
+		add_action( 'manage_users_custom_column', array( $this, 'date_registered_column_content' ), 10, 3);
+		// Tell WP that our new column is sortable.
+		add_filter( 'manage_users_sortable_columns', array( $this, 'date_registered_column_declare_sortable' ) );
+		// Sorting will work as expected because the column name is the orderby keyword, "user_registered".
+
 		// Add a "Spammers" view to the WP Users List Table
 		add_filter( 'views_users', array( $this, 'add_spammers_filter_link' ) );
 		// Apply the filter when necessary.
@@ -1466,6 +1475,53 @@ SQL;
 		}
 
 		echo $input;
+	}
+
+	/**
+	 * Add our new column to the WP Users list table.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param  array $columns The array of columns to include.
+	 *
+	 * @return array $columns
+	 */
+	public function add_date_registered_column( $columns ) {
+		$columns['user_registered'] = __( 'Date Registered', 'bp-moderation' );
+		return $columns;
+	}
+
+	/**
+	 * Populate our new column in the WP Users list table.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param  string $value       Custom column output. Default empty.
+	 * @param  string $column_name Column name.
+	 * @param  int $user_id        ID of the currently-listed user.
+	 *
+	 * @return array $columns
+	 */
+	public function date_registered_column_content( $value, $column_name, $user_id ) {
+		if ( 'user_registered' == $column_name ) {
+			$user = get_userdata( $user_id );
+			return $user->user_registered;
+		}
+		return $value;
+	}
+
+	/**
+	 * Tell WP that our new column is sortable.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param  array $columns The array of columns to make sortable.
+	 *
+	 * @return array $columns
+	 */
+	public function date_registered_column_declare_sortable( $columns ) {
+		$columns['user_registered'] = 'user_registered';
+		return $columns;
 	}
 
 	/**
