@@ -27,6 +27,12 @@ class bpModBackend extends bpModeration
 		add_action('rightnow_end', array(&$this, 'rightnow_widget_section'));
 		add_action('admin_init', array(&$this, 'register_settings'));
 
+		// Add a "Spammers" view to the WP Users List Table
+		add_filter( 'views_users', array( $this, 'add_spammers_filter_link' ) );
+		// Apply the filter when necessary.
+		add_filter( 'pre_get_users', array( $this, 'apply_spammers_filter' ) );
+
+
 		if (isset($this->options['generate_test_data'])) {
 			unset($this->options['generate_test_data']);
 			update_site_option('bp_moderation_options', $this->options);
@@ -1460,6 +1466,70 @@ SQL;
 		}
 
 		echo $input;
+	}
+
+	/**
+	 * Add a "spammers" list view to the WP Users List Table.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param array $views An array of available list table views.
+	 *
+	 * @return array $views
+	 */
+	public function add_spammers_filter_link( $views ) {
+		global $wpdb;
+
+		if ( is_network_admin() ) {
+			$base_url = network_admin_url( 'users.php' );
+			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users WHERE ($wpdb->users.user_status = 1 OR $wpdb->users.spam = 1)" );
+		} else {
+			$base_url = bp_get_admin_url( 'users.php' );
+			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users WHERE $wpdb->users.user_status = 1" );
+		}
+
+		$url = add_query_arg( 'type', 'spam', $base_url );
+
+		if ( isset( $_GET[ 'type' ] ) && 'spam' == $_GET[ 'type' ] ) {
+			$views['all'] = str_replace( 'class="current"', '', $views['all'] );
+			$active_class = 'current';
+		} else {
+			$active_class = '';
+		}
+
+		$views['spam'] = sprintf( '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>', $url, $active_class, __( 'Spam', 'bp-moderate' ), number_format_i18n( $count ) );
+
+		return $views;
+	}
+
+	/**
+	 * Filter the user query to "spammers" on the WP Users List Table.
+	 *
+	 * @since  0.2.0
+	 *
+	 * @param WP_User_Query $query The current WP_User_Query instance,
+	 *                             passed by reference.
+	 */
+	function apply_spammers_filter( $query ) {
+		global $pagenow, $wpdb;
+
+		if ( is_admin() && 'users.php' == $pagenow && isset( $_GET[ 'type' ] ) && 'spam' == $_GET[ 'type' ] ) {
+
+			// I'm not seeing a way to make WP_User_Query use the user_status column, so...
+			$user_ids = array();
+			if ( is_network_admin() ) {
+				$user_ids = $wpdb->get_col( "SELECT ID FROM $wpdb->users WHERE ($wpdb->users.user_status = 1 OR $wpdb->users.spam = 1)" );
+			} else {
+				$user_ids = $wpdb->get_col( "SELECT ID FROM $wpdb->users WHERE $wpdb->users.user_status = 1" );
+			}
+
+			// Passing an empty array to the 'include' parameter returns all users. Don't do that.
+			if ( empty( $user_ids ) ) {
+				$user_ids = array( 0 );
+			}
+
+			$query->set( 'include', $user_ids );
+		}
 	}
 }
 

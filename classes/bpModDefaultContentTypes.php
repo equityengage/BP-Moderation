@@ -156,8 +156,8 @@ class bpModDefaultContentTypes
 			add_filter('bp_moderation_activity_loop_link_args_new_forum_topic', array(__CLASS__, 'forum_post_convert_activity_args'));
 			add_action('bp_group_forum_post_meta', array(__CLASS__, 'forum_post_print_link'));
 		}
-	
-                
+
+
 		//  private message sender
 		$bpmod->content_types['private_message_sender'] = new stdClass();
 		$bpmod->content_types['private_message_sender']->label = __('Private message sender', 'bp-moderation');
@@ -169,7 +169,7 @@ class bpModDefaultContentTypes
 		if (isset ($init_types['private_message_sender'])) {
 			add_action('bp_after_message_thread_list', array(__CLASS__, 'private_message_sender_print_links'));
 		}
-		
+
 		//  private message
 		$bpmod->content_types['private_message'] = new stdClass();
 		$bpmod->content_types['private_message']->label = __('Private message', 'bp-moderation');
@@ -651,7 +651,7 @@ class bpModDefaultContentTypes
 
 		echo "<span class='links-separator'> | </span>$link";
 	}
-	
+
 
 /*******************************************************************************
  * Private message sender
@@ -670,17 +670,17 @@ class bpModDefaultContentTypes
 									));
 			}
 		}
-		
+
 		if (!count($report_links)) {
 			return;
 		}
-		
+
 		echo '<p class="bp-mod-pm-thread-links">';
 		printf(__('Flag sender as inappropriate: %s', 'bp-moderation'),join(' ', $report_links));
 		echo '</p>';
 	}
 
-	
+
 /*******************************************************************************
  * Private message
  */
@@ -691,13 +691,13 @@ class bpModDefaultContentTypes
 			return false;
 		}
 		$url = bp_core_get_user_domain($sender_id) . bp_get_messages_slug() . '/view/' . $thread_id;
-		
+
 		foreach ((array) $thread->messages as $msg) {
 			if ($sender_id == $msg->sender_id) {
 				return array('author' => $sender_id, 'url' => $url, 'date' => $msg->date_sent);
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -734,19 +734,19 @@ class bpModDefaultContentTypes
 										'id' => bp_get_the_thread_id(),
 										'id2' => $sender_id,
 										'unflagged_text' => __('Flag message', 'bp-moderation'),
-										'custom_class' => 'button'
+										'custom_class' => 'alignright button'
 									));
 
 		echo '<p class="bp-mod-pm-thread-links">';
 		echo $report_link;
 		echo '</p>';
 	}
-	
+
 	public static function private_message_view_link_override($content) {
 		$content->item_url = wp_nonce_url($content->item_url.'?bpmSuperAdminOverridePrivateMessage', 'bpmSuperAdminOverridePrivateMessage');
 		return $content;
 	}
-	
+
 	public static function private_message_super_admin_override() {
 		if(!isset($_GET['bpmSuperAdminOverridePrivateMessage']) || !is_super_admin()) {
 			return;
