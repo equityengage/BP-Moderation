@@ -27,7 +27,7 @@ class bpModFrontend extends bpModeration
 			return;
 		}
 
-		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, $this->plugin_ver, 'screen');
+		wp_enqueue_style('bp-moderation', $this->plugin_url . '/css/bp-moderation.css', false, '20170717', 'screen');
 		wp_enqueue_script('bp-moderation', $this->plugin_url . '/js/bp-moderation.js', array('jquery'), $this->plugin_ver, !'in footer');
 		wp_enqueue_style( 'dashicons' );
 	}
