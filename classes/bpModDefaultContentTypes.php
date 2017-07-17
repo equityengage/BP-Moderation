@@ -67,8 +67,16 @@ class bpModDefaultContentTypes
 
 		if (isset ($init_types['blog_post'])) {
 			$bpmod->types_map['new_blog_post'] = 'blog_post';
-			add_filter('the_content', array(__CLASS__, 'blog_post_append_link'));
-			add_filter('the_excerpt', array(__CLASS__, 'blog_post_append_link'));
+
+			// If Jetpack Sharedaddy is enabled, add moderation button to their row.
+			if ( function_exists( 'sharing_email_send_post' ) ) {
+				add_filter( 'jetpack_sharing_display_markup', array( __CLASS__, 'blog_post_append_link_with_jetpack' ) );
+
+			// Else, add our moderation button to the end of the blog post content.
+			} else {
+				add_filter('the_content', array(__CLASS__, 'blog_post_append_link'));
+				add_filter('the_excerpt', array(__CLASS__, 'blog_post_append_link'));
+			}
 		}
 
 		//  blog page
@@ -299,6 +307,31 @@ class bpModDefaultContentTypes
 		restore_current_blog();
 
 		return $r;
+	}
+
+	/**
+	 * Add blog post moderate link to Jetpack's Sharedaddy row, if available.
+	 *
+	 * @param  string $retval Current markup for the Sharedaddy buttons.
+	 * @return string
+	 */
+	public static function blog_post_append_link_with_jetpack( $retval ) {
+		$link = bpModFrontend::get_link(array(
+			 'type' => 'blog_post',
+			 'author_id' => $GLOBALS['post']->post_author,
+			 'id' => get_current_blog_id(),
+			 'id2' => $GLOBALS['post']->ID,
+			 'custom_class' => 'sd-button'
+		));
+
+		if ( empty( $link ) ) {
+			return $retval;
+		}
+
+		return str_replace( '<li class="share-end"',
+			"<li class=\"share-moderation\">{$link}</li>" . '<li class="share-end"',
+			$retval
+		);
 	}
 
 	public static function blog_post_append_link($content)
