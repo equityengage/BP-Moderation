@@ -174,7 +174,7 @@ class bpModActions extends bpModeration
 		$author_name = bp_core_get_user_displayname($cont->item_author);
 		$author_email = bp_core_get_user_email($cont->item_author);
 
-		$subject = "[$sitename] " . __('one of your contents has been reported as inappropriate', 'bp-moderation');
+		$subject = "[$sitename] " . __('One of your community contributions has been reported by a site member', 'bp-moderation');
 		$message = $this->options['warning_message'];
 		$message = str_replace('%AUTHORNAME%', $author_name, $message);
 		$message = str_replace('%CONTENTURL%', $cont->item_url, $message);
@@ -189,7 +189,7 @@ class bpModActions extends bpModeration
 		do_action('bp_moderation_content_warned', $cont->content_id, $cont);
 
 		if ($this->options['warning_forward']) {
-			$admin_subject = "[$sitename] " . sprintf(__('a warning for inappropriate content has been sent to %s', 'bp-moderation'), $author_name);
+			$admin_subject = "[$sitename] " . sprintf(__('A warning for a reported community contribution has been sent to %s', 'bp-moderation'), $author_name);
 			$admin_msg_prefix = sprintf(__(
 											'Content url: %1$s
 Total flags: %2$s
