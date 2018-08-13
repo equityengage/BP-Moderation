@@ -1,7 +1,7 @@
 # UCPT Labs Update
 ## Updating this older plug-in for use as a UCPT Labs project.
 
-Please note, this is a plug-in that was previously available that is being updated for better compatibility with the UCPT framework. At this time, this is a UCPT Labs project, which means that it is NOT ready for production. Use at your own discretion, and understand that we have not yet fully reviewed this code, merely made it function with the UCPT framework on our demo installation.
+Please note, this is a plug-in that was previously available that is being updated for better compatibility with the UCPT framework. At this time, this is a UCPT Labs project, which means that it is NOT ready for production. Use at your own discretion, and understand that we have not yet fully reviewed this code, but merely made it function with the UCPT framework on our demo installation.
 
 NOTICE - OUTSIDE OF THE SCOPE OF PILOTS
 
