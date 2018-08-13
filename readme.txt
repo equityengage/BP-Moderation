@@ -1,3 +1,8 @@
+# UCPT Labs Update
+Updating this older plug-in for use as a UCPT Labs project.
+
+NOTICE - OUTSIDE OF THE SCOPE OF PILOTS
+
 === BuddyPress Moderation ===
 Contributors: francescolaffi
 Donate link: http://flweb.it/
