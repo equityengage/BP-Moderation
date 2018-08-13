@@ -105,7 +105,7 @@ A user has reported one of your community contributions as inappropriate.
 
 A community moderator will soon review and moderate this contribution if necessary.
 
-Please remember that all contributions must comply with our terms and privacy policies (https://mygarrettcounty.com/terms-privacy-policies/), and that contributions will only be moderated if it is found to be in violation of one of these policies or inappropriate for this community.
+Please remember that all contributions must comply with our terms and privacy policies, and that contributions will only be moderated if it is found to be in violation of one of these policies or inappropriate for this community.
 
 --------------------
 [%SITENAME%] %SITEURL%
