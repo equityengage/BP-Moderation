@@ -98,14 +98,15 @@ class bpModInstaller extends bpModAbstractCore
 		$def_options = array(
 			'unflagged_text' => __('Flag', 'bp-moderation'),
 			'flagged_text' => __('Unflag', 'bp-moderation'),
-			'warning_threshold' => 5,
+			'warning_threshold' => 1,
 			'warning_forward' => get_option('admin_email'),
 			'warning_message' => __(<<< TXT
-Several user reported one of your content as inappropriate.
-You can see the content in the page: %CONTENTURL%.
-You posted this content with the account "%AUTHORNAME%".
+A user has reported one of your community contributions as inappropriate.
 
-A community moderator will soon review and moderate this content if necessary.
+A community moderator will soon review and moderate this contribution if necessary.
+
+Please remember that all contributions must comply with our terms and privacy policies (https://mygarrettcounty.com/terms-privacy-policies/), and that contributions will only be moderated if it is found to be in violation of one of these policies or inappropriate for this community.
+
 --------------------
 [%SITENAME%] %SITEURL%
 TXT
